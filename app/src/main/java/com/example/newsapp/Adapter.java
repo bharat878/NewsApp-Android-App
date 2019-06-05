@@ -2,6 +2,7 @@ package com.example.newsapp;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,9 +25,18 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.newsapp.m.Article;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
+    public static final String IMAGE = "IMAGE";
+    public static final String TITLE = "TITLE";
+    public static final String DESC = "DESC";
+    public static final String AUTHOR = "AUTHOR";
+    public static final String PUBLISHEDAT = "PUBLISHEDAT";
+    public static final String SOURCE = "SOURCE";
+    public static final String HASH_EXTRA = "HASH_EXTRA";
+
     private List<Article> articles;
     private Context context;
     private OnItemClickListener onItemClickListener;
@@ -44,9 +54,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull MyViewHolder viewHolder, final int i) {
         final MyViewHolder holder = viewHolder;
-        Article model = articles.get(i);
+        final Article model = articles.get(i);
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(utils.getRandomDrawbleColor());
         requestOptions.error(utils.getRandomDrawbleColor());
@@ -80,6 +90,27 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 //        }
         holder.publishedAt.setText(utils.DateFormat(model.getPublishedAt()));
         holder.author.setText(model.getAuthor());
+
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                hashMap.put(TITLE, model.getTitle());
+                hashMap.put(IMAGE, model.getUrlToImage());
+                hashMap.put(DESC, model.getDescription());
+                hashMap.put(AUTHOR, model.getAuthor());
+                hashMap.put(PUBLISHEDAT, model.getPublishedAt());
+               // hashMap.put(SOURCE, model.getSource());
+
+                Intent intent = new Intent(context, NewsDetails.class);
+                intent.putExtra(HASH_EXTRA,hashMap);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+
+            }
+        });
 
 
     }
